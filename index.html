@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vaivén</title>
+<meta name="description" content="Tu bitácora de bienestar: comida, ejercicio, eventos, sueño y salud.">
+<meta name="theme-color" content="#0E6B70">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vaivén">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one mobile column (max 600px), bottom tab bar, floating chat button; wave motif = celebrar y volver al equilibrio */
+:root{
+  --bg:#EDF3F1; --surface:#FFFFFF; --surface-2:#E1EBE8; --ink:#13252A; --muted:#55696D; --line:#D0DDD9;
+  --teal:#0E6B70; --teal-ink:#FFFFFF; --teal-soft:#D3EAE8;
+  --sun:#E9A21F; --sun-soft:#FBEBC8;
+  --copihue:#B92C4B; --copihue-soft:#F6D9DF;
+  --good:#2C8452; --warn:#B86F0E;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D191B; --surface:#142427; --surface-2:#1B2F33; --ink:#E4EEEB; --muted:#98AEAC; --line:#26393D;
+  --teal:#40B5AF; --teal-ink:#05201F; --teal-soft:#16393A;
+  --sun:#F2B648; --sun-soft:#3A3018;
+  --copihue:#EA6683; --copihue-soft:#3B1E26;
+  --good:#5BC488; --warn:#E6A145; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0D191B; --surface:#142427; --surface-2:#1B2F33; --ink:#E4EEEB; --muted:#98AEAC; --line:#26393D;
+  --teal:#40B5AF; --teal-ink:#05201F; --teal-soft:#16393A;
+  --sun:#F2B648; --sun-soft:#3A3018;
+  --copihue:#EA6683; --copihue-soft:#3B1E26;
+  --good:#5BC488; --warn:#E6A145; color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--ink)}
+:root{padding-top:env(safe-area-inset-top,0px);color-scheme:light}
+body{margin:0;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+img{max-width:100%}
+[hidden]{display:none!important}
+.setup{display:flex;flex-direction:column;gap:14px;padding-block:20px}
+body{font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.55rem;font-weight:800}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:8px}
+.app{max-width:600px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:12px calc(120px + env(safe-area-inset-bottom, 0px))}
+.top{display:flex;align-items:center;gap:10px;padding-block:6px 14px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:800;font-size:1.35rem;letter-spacing:-.02em}
+.brand svg{width:34px;height:34px;flex:none}
+.top .date{margin-left:auto;color:var(--muted);font-size:.85rem;text-align:right}
+.view{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.label{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.btn{border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;background:var(--teal);color:var(--teal-ink);display:inline-flex;align-items:center;gap:8px;min-height:44px}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.sun{background:var(--sun);color:#2A1D02}
+.btn.cop{background:var(--copihue);color:#fff}
+.btn.sm{padding:6px 12px;min-height:34px;font-size:.88rem}
+.btn:disabled{opacity:.55;cursor:wait}
+.btn svg{width:18px;height:18px}
+.iconbtn{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px;min-width:34px;min-height:34px}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--surface-2);color:var(--ink)}
+.chip.teal{background:var(--teal-soft);color:var(--teal)}
+.chip.sun{background:var(--sun-soft);color:var(--warn)}
+.chip.cop{background:var(--copihue-soft);color:var(--copihue)}
+.tabular{font-variant-numeric:tabular-nums}
+
+/* Hoy */
+.hero{padding-block:6px 4px;display:flex;flex-direction:column;gap:6px}
+.hero h1{font-size:clamp(2rem,8vw,2.7rem);font-weight:800;letter-spacing:-.03em}
+.wave{width:100%;height:28px;display:block;color:var(--teal)}
+.wave path{stroke-dasharray:6 0}
+@media (prefers-reduced-motion:no-preference){.wave .w1{animation:sway 6s ease-in-out infinite alternate}}
+@keyframes sway{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat b{font-family:var(--display);font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:.72rem;color:var(--muted);line-height:1.2}
+@media (max-width:380px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.eventcard{background:var(--copihue);color:#fff;border:0}
+.eventcard .label,.eventcard .muted{color:rgba(255,255,255,.82)}
+.count{font-family:var(--display);font-weight:800;font-size:3rem;line-height:.9;font-variant-numeric:tabular-nums}
+.phase{display:inline-block;background:rgba(255,255,255,.18);border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:700}
+.reco-day{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.reco-day ul,.list-plain{margin:0;padding-left:18px}
+
+/* listas */
+.entry{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.entry:first-of-type{border-top:0}
+.entry .body{flex:1;min-width:0}
+.entry .t{font-weight:700}
+.entry .dot{width:10px;height:10px;border-radius:50%;margin-top:7px;flex:none;background:var(--teal)}
+.dayhead{font-family:var(--display);font-weight:700;font-size:1rem}
+.empty{border:1.5px dashed var(--line);border-radius:var(--r);padding:18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:10px;align-items:center}
+
+/* ejercicio */
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wd{border-radius:10px;padding:8px 2px;text-align:center;background:var(--surface-2);display:flex;flex-direction:column;gap:2px;min-width:0}
+.wd b{font-family:var(--display);font-size:.95rem}
+.wd span{font-size:.62rem;line-height:1.15;color:var(--muted);overflow-wrap:anywhere}
+.wd.today{background:var(--teal);color:var(--teal-ink)}
+.wd.today span{color:var(--teal-ink);opacity:.85}
+.wd .ok{font-size:.75rem;color:var(--good);font-weight:700}
+.wd.today .ok{color:var(--teal-ink)}
+details.routine{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+details.routine summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px}
+details.routine summary::-webkit-details-marker{display:none}
+details.routine summary .ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none;font-family:var(--display);font-weight:800;color:var(--teal-ink);background:var(--teal)}
+details.routine[open] summary{border-bottom:1px solid var(--line)}
+.ex{padding:12px 16px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+.ex:first-of-type{border-top:0}
+.ex .dose{font-variant-numeric:tabular-nums;font-weight:700;color:var(--teal);text-align:right}
+.ex .how{grid-column:1/-1;color:var(--muted);font-size:.9rem}
+.ex .lv{grid-column:1/-1;font-size:.82rem;display:flex;gap:6px;flex-wrap:wrap}
+.routine .foot{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* eventos */
+.phases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.phases{grid-template-columns:1fr}}
+.ph{background:var(--surface-2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ph ul{margin:0;padding-left:18px;font-size:.9rem}
+.ph.on{outline:2px solid var(--copihue)}
+
+/* sueño */
+.chart{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:11px;font-family:var(--body)}
+
+/* salud tabs */
+.seg{display:flex;background:var(--surface-2);border-radius:999px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;border-radius:999px;padding:8px 6px;font-weight:700;cursor:pointer;color:var(--muted);min-height:38px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(4px, env(safe-area-inset-left, 0px));padding-right:max(4px, env(safe-area-inset-right, 0px))}
+.nav .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.nav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 9px;cursor:pointer;color:var(--muted);font-size:.68rem;font-weight:700;min-width:0}
+.nav button svg{width:23px;height:23px}
+.nav button[aria-current="page"]{color:var(--teal)}
+.fab{position:fixed;z-index:21;right:max(16px, calc(50% - 284px), env(safe-area-inset-right, 0px));bottom:calc(78px + env(safe-area-inset-bottom, 0px));border:0;border-radius:999px;background:var(--sun);color:#2A1D02;padding:12px 18px 12px 14px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);font-family:var(--display);font-size:1rem}
+.fab svg{width:22px;height:22px}
+
+/* sheet */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(5,15,17,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:100%;max-width:600px;max-height:90%;overflow:auto;border-radius:20px 20px 0 0;padding:18px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:14px}
+form.f{display:flex;flex-direction:column;gap:12px}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld label{font-size:.85rem;font-weight:700;color:var(--muted)}
+.fld input,.fld select,.fld textarea{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px;width:100%}
+.fld textarea{min-height:84px;resize:vertical}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.notice{background:var(--sun-soft);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:.88rem}
+.err{background:var(--copihue-soft);color:var(--copihue);border-radius:12px;padding:10px 12px;font-size:.9rem}
+.spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* chat */
+.chat{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column}
+.chat header{background:var(--teal);color:var(--teal-ink);padding:calc(10px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));display:flex;align-items:center;gap:10px}
+.chat header .iconbtn{color:var(--teal-ink)}
+.msgs{flex:1;overflow-y:auto;padding:14px max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:10px;max-width:600px;width:100%;margin:0 auto}
+.msg{max-width:85%;padding:9px 13px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.me{align-self:flex-end;background:var(--teal);color:var(--teal-ink);border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg img{max-width:160px;border-radius:10px;display:block;margin-bottom:6px}
+.pending{align-self:flex-start;background:var(--surface);border:1.5px solid var(--sun);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;max-width:92%}
+.pending .it{display:flex;gap:8px;align-items:baseline;font-size:.92rem}
+.composer{border-top:1px solid var(--line);background:var(--surface);padding:10px max(12px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px, env(safe-area-inset-left, 0px))}
+.composer .in{max-width:600px;margin:0 auto;display:flex;gap:8px;align-items:flex-end}
+.composer textarea{flex:1;min-width:0;resize:none;border:1px solid var(--line);background:var(--bg);border-radius:20px;padding:10px 14px;max-height:120px;min-height:44px}
+.attach{position:relative;overflow:hidden}
+.attach input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.thumb{font-size:.8rem;color:var(--muted);max-width:600px;margin:0 auto 6px;display:flex;gap:8px;align-items:center}
+.foot-note{font-size:.8rem;color:var(--muted);text-align:center;padding-block:8px}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="top">
+    <div class="brand" aria-label="Vaivén">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="var(--teal)"/><path d="M6 23c4-8 8-8 12 0s8 8 12 0 4-5 4-5" fill="none" stroke="var(--sun)" stroke-width="4" stroke-linecap="round"/><circle cx="30" cy="13" r="3" fill="var(--teal-ink)"/></svg>
+      Vaivén
+    </div>
+    <div class="date" id="topDate"></div>
+    <button class="iconbtn" id="cfgBtn" aria-label="Configuración"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+  <main id="main" class="view" aria-live="polite"></main>
+  <p class="foot-note" id="modeNote"></p>
+</div>
+
+<button class="fab" id="fab" aria-label="Abrir chat con Vaivén">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg>
+  Contarle a Vaivén
+</button>
+
+<nav class="nav" aria-label="Secciones"><div class="in" id="navIn"></div></nav>
+
+<div id="layer"></div>
+
+<script>
+/* ---------- utilidades ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const ds = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const parseD = s => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+const today = () => ds(new Date());
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate() + n); return ds(d); };
+const diffDays = (a, b) => Math.round((parseD(b) - parseD(a)) / 864e5);
+const fmtDay = s => { const t = parseD(s).toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); return t.charAt(0).toUpperCase() + t.slice(1); };
+const fmtShort = s => parseD(s).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
+const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''));
+const isTime = s => /^\d{1,2}:\d{2}$/.test(String(s || ''));
+const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isFinite(n) ? n : 0; };
+function sleepHours(a, b) {
+  if (!isTime(a) || !isTime(b)) return 0;
+  const [h1, m1] = a.split(':').map(Number), [h2, m2] = b.split(':').map(Number);
+  let t = (h2 * 60 + m2) - (h1 * 60 + m1); if (t <= 0) t += 1440;
+  return Math.round(t / 6) / 10;
+}
+const ls = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+const icon = {
+  hoy: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  comida: '<path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2.5 1.5-4 4.5-4 8h4"/>',
+  mover: '<circle cx="13" cy="4" r="2"/><path d="M8 21l3-6 3 2v5M6 12l3-4 4 1 3 3 3 1M11 15l-1-5"/>',
+  eventos: '<path d="M8 2l-2 9a4 4 0 0 0 8 0L12 2zM10 15v6M7 21h6M16 4l2 2M20 3v3M18 9h3"/>',
+  sueno: '<path d="M20 15A8 8 0 1 1 9 4a6.5 6.5 0 0 0 11 11z"/>',
+  salud: '<path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"/><path d="M9 11h6M12 8v6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  cam: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  spark: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+  send: '<path d="M4 12l16-8-6 16-3-7z"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/>'
+};
+const svg = (k, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon[k]}</svg>`;
+
+/* ---------- conexión con tu servidor (Apps Script) ---------- */
+// Después de publicar el Apps Script, pega aquí su dirección (termina en /exec).
+// Si queda vacía, la app la pide en la pantalla de Configuración.
+const API_URL = '';
+function getCfg() { const c = ls.get('vaiven.cfg', {}); return { url: API_URL || c.url || '', token: c.token || '' }; }
+async function api(action, data = {}) {
+  const cfg = getCfg();
+  if (!cfg.url || !cfg.token) throw { code: 'config' };
+  let r;
+  try {
+    r = await fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, token: cfg.token, ...data }) });
+  } catch { throw { code: 'red' }; }
+  let j; try { j = await r.json(); } catch { throw { code: 'respuesta' }; }
+  if (!j.ok) throw { code: j.error || 'error', detail: j.detail };
+  return j;
+}
+
+/* ---------- almacenamiento ---------- */
+const Store = {
+  items: [], mode: 'loading', subs: [], lastErr: null,
+  on(fn) { this.subs.push(fn); },
+  emit() { this.subs.forEach(f => f()); },
+  of(kind) { return this.items.filter(i => i.kind === kind); },
+  saveLocal() { ls.set('vaiven.items', this.items); },
+  async init() {
+    this.items = ls.get('vaiven.items', []);   // copia guardada en el teléfono para abrir rápido
+    const cfg = getCfg();
+    if (!cfg.url || !cfg.token) { this.mode = 'config'; this.emit(); return; }
+    this.mode = this.items.length ? 'sync' : 'loading'; this.emit();
+    try {
+      const j = await api('list');
+      this.items = Array.isArray(j.items) ? j.items : [];
+      this.mode = 'cloud'; this.lastErr = null; this.saveLocal();
+    } catch (e) { this.mode = e.code === 'clave' ? 'config' : 'offline'; this.lastErr = e; }
+    this.emit();
+  },
+  async add(o) {
+    o = { ...o, createdAt: Date.now(), id: 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7) };
+    await api('add', { item: o });
+    this.items.push(o); this.saveLocal(); this.emit();
+  },
+  async update(id, patch) {
+    await api('update', { id, patch });
+    const it = this.items.find(i => i.id === id); if (it) Object.assign(it, patch);
+    this.saveLocal(); this.emit();
+  },
+  async remove(id) {
+    await api('delete', { id });
+    this.items = this.items.filter(i => i.id !== id); this.saveLocal(); this.emit();
+  }
+};
+
+/* ---------- IA (Claude, a través de tu servidor) ---------- */
+async function imageLimits() {
+  const c = getCfg(); if (!c.url || !c.token) return null;
+  return { mediaTypes: ['image/*'], maxInputBytes: 25 * 1024 * 1024, maxCount: 3 };
+}
+// Achica la foto antes de enviarla: menos datos y menor costo
+async function fileToImage(file) {
+  const dataUrl = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(file); });
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = dataUrl; });
+  const max = 1280, s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return { media_type: 'image/jpeg', data: c.toDataURL('image/jpeg', 0.82).split(',')[1] };
+}
+function parseJSONLoose(t) {
+  t = String(t || '').trim();
+  try { return JSON.parse(t); } catch {}
+  const f = t.match(/```(?:json)?\s*([\s\S]*?)```/); if (f) { try { return JSON.parse(f[1]); } catch {} }
+  const a = Math.min(...['{', '['].map(ch => { const i = t.indexOf(ch); return i < 0 ? Infinity : i; }));
+  const b = Math.max(t.lastIndexOf('}'), t.lastIndexOf(']'));
+  if (a < Infinity && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch {} }
+  throw { code: 'invalid_json' };
+}
+async function aiText(prompt, images, maxTokens) {
+  const imgs = [];
+  for (const f of (images || [])) { try { imgs.push(await fileToImage(f)); } catch { throw { code: 'image_rejected' }; } }
+  const j = await api('ai', { prompt, images: imgs, max_tokens: maxTokens || 1500 });
+  return j.text;
+}
+async function aiJSON(prompt, images) {
+  const t = await aiText(prompt + '\n\nResponde únicamente con el JSON, sin texto antes ni después.', images, 2000);
+  return parseJSONLoose(t);
+}
+function aiError(e) {
+  const c = e && e.code; const d = String(e && e.detail || '');
+  if (c === 'config') return 'Falta configurar la conexión. Toca el engranaje arriba a la derecha.';
+  if (c === 'clave') return 'La clave de la app no coincide con la de tu servidor. Revísala en Configuración.';
+  if (c === 'red') return 'Sin conexión a internet. Intenta de nuevo cuando tengas señal.';
+  if (c === 'sin_llave') return 'Falta la llave de Claude (ANTHROPIC_API_KEY) en las propiedades de tu Apps Script.';
+  if (c === 'ia_401') return 'La llave de Claude no es válida. Revisa ANTHROPIC_API_KEY en tu Apps Script.';
+  if (c === 'ia_429' || c === 'ia_529') return 'Claude está con mucha demanda. Espera un minuto y vuelve a intentarlo.';
+  if (/credit|balance|billing/i.test(d)) return 'Tu cuenta de la API de Claude no tiene saldo. Carga saldo en console.anthropic.com.';
+  if (c === 'invalid_json') return 'La respuesta llegó incompleta. Intenta de nuevo con una descripción más corta.';
+  if (c === 'image_rejected') return 'No pude leer esa foto. Prueba con otra.';
+  return 'Algo falló al consultar la IA' + (d ? ' (' + d.slice(0, 120) + ')' : '') + '. Intenta de nuevo en un momento.';
+}
+const PERSONA = 'Eres Vaivén, un asistente de bienestar amable, cercano y sin culpas, que habla español de Chile de forma natural (sin exagerar modismos). El usuario tiene 48 años. No diagnosticas ni recetas medicamentos; ante síntomas preocupantes recomiendas consultar a un profesional. Nunca uses lenguaje de culpa o castigo sobre la comida o el alcohol.';
+
+function historySummary(days = 7) {
+  const t = today(), from = addDays(t, -days + 1);
+  const meals = Store.of('meal').filter(m => m.date >= from && m.date <= t).sort((a, b) => a.date.localeCompare(b.date));
+  const sleep = Store.of('sleep').filter(m => m.date >= from).sort((a, b) => a.date.localeCompare(b.date));
+  const work = Store.of('workout').filter(m => m.date >= from);
+  const evs = Store.of('event').filter(e => e.date >= addDays(t, -3) && e.date <= addDays(t, 21)).sort((a, b) => a.date.localeCompare(b.date));
+  const lines = [];
+  lines.push('Hoy es ' + t + ' (' + fmtDay(t) + ').');
+  lines.push('COMIDAS últimos ' + days + ' días:');
+  if (!meals.length) lines.push('- (sin registros)');
+  meals.forEach(m => lines.push(`- ${m.date} ${m.momento || ''}: ${m.desc}${m.kcal ? ' (~' + m.kcal + ' kcal)' : ''}${m.alcohol ? ' · ' + m.alcohol + ' tragos' : ''}`));
+  lines.push('SUEÑO:'); if (!sleep.length) lines.push('- (sin registros)');
+  sleep.forEach(s => lines.push(`- ${s.date}: ${s.horas} h, calidad ${s.calidad}/5`));
+  lines.push('EJERCICIO:'); if (!work.length) lines.push('- (sin registros)');
+  work.forEach(w => lines.push(`- ${w.date}: ${w.tipo} ${w.minutos || ''} min`));
+  lines.push('EVENTOS cercanos:'); if (!evs.length) lines.push('- (ninguno)');
+  evs.forEach(e => lines.push(`- ${e.date}: ${e.nombre} (${e.tipo}); comida ${['', 'moderada', 'abundante', 'muy abundante'][e.comida || 2]}, alcohol ${['nada', 'poco', 'moderado', 'harto'][e.alcohol ?? 2]}`));
+  return lines.join('\n');
+}
+
+/* ---------- contenido: ejercicio ---------- */
+const ROUTINES = {
+  A: { name: 'Fuerza A', tag: 'A', mins: 25, intro: 'Piernas, empuje y zona media. Descansa 45–60 s entre series.', ex: [
+    { n: 'Sentadilla a la silla', d: '3 × 10', how: 'Siéntate apenas en el borde de una silla y levántate sin usar las manos. Rodillas en la línea de los pies.', easy: 'Usa una silla más alta o apóyate en una mesa', hard: 'Baja en 3 segundos y sube rápido' },
+    { n: 'Flexiones inclinadas', d: '3 × 8–12', how: 'Manos en el borde de una mesa firme o en la encimera, cuerpo recto de talones a cabeza.', easy: 'Contra la pared', hard: 'Manos en una silla o en el suelo con rodillas' },
+    { n: 'Puente de glúteos', d: '3 × 12', how: 'Acostado boca arriba, rodillas dobladas. Sube la cadera apretando glúteos, sostén 2 segundos.', easy: 'Rango más corto', hard: 'Con una sola pierna' },
+    { n: 'Nadador boca abajo', d: '3 × 10', how: 'Acostado boca abajo, eleva brazos y pecho unos centímetros mirando al suelo. Fortalece la espalda.', easy: 'Solo brazos', hard: 'Sostén 3 segundos arriba' },
+    { n: 'Plancha', d: '3 × 20–30 s', how: 'Antebrazos en el suelo, abdomen firme, sin hundir la cadera.', easy: 'Con rodillas apoyadas', hard: 'Hasta 45 segundos' },
+    { n: 'Elevación de talones', d: '3 × 15', how: 'De pie, apoyado en una pared, sube a puntillas y baja lento.', easy: 'Rango más corto', hard: 'En un escalón o con una pierna' }
+  ]},
+  B: { name: 'Fuerza B', tag: 'B', mins: 25, intro: 'Cadera, espalda y estabilidad. Descansa 45–60 s entre series.', ex: [
+    { n: 'Zancada hacia atrás', d: '3 × 8 c/pierna', how: 'Da un paso atrás y baja la rodilla trasera hacia el suelo. Apóyate en una silla si lo necesitas.', easy: 'Rango corto con apoyo', hard: 'Sin apoyo y más lento' },
+    { n: 'Subir al escalón', d: '3 × 10 c/pierna', how: 'Sube a un escalón firme empujando con el talón y baja controlado.', easy: 'Escalón más bajo, con pasamanos', hard: 'Escalón más alto' },
+    { n: 'Bisagra de cadera', d: '3 × 12', how: 'Manos en la cintura, empuja la cadera hacia atrás con la espalda recta hasta sentir los isquiotibiales.', easy: 'Rango corto', hard: 'Sobre una pierna, con apoyo' },
+    { n: 'Perro-pájaro', d: '3 × 8 c/lado', how: 'En cuatro apoyos, estira brazo y pierna contrarios sin mover la cadera. Vuelve lento.', easy: 'Solo brazo o solo pierna', hard: 'Sostén 3 segundos' },
+    { n: 'Plancha lateral', d: '2 × 20 s c/lado', how: 'Apoyado en el antebrazo, cuerpo en línea. Es clave para la espalda baja.', easy: 'Con rodillas dobladas', hard: 'Piernas estiradas, hasta 40 s' },
+    { n: 'Remo con toalla en la puerta', d: '3 × 12', how: 'Pasa una toalla gruesa por la manilla de una puerta cerrada y firme, inclínate atrás y tira hacia el pecho.', easy: 'Cuerpo más vertical', hard: 'Pies más cerca de la puerta' }
+  ]},
+  M: { name: 'Movilidad y equilibrio', tag: 'M', mins: 15, intro: 'Suave y sin dolor. Mejora la postura y previene caídas.', ex: [
+    { n: 'Gato-vaca', d: '10 lentas', how: 'En cuatro apoyos, alterna redondear y arquear la espalda con la respiración.', easy: '', hard: '' },
+    { n: 'Rotación de tórax', d: '8 c/lado', how: 'Acostado de lado con rodillas dobladas, abre el brazo de arriba hacia el otro lado como un libro.', easy: '', hard: '' },
+    { n: 'Apertura de cadera 90/90', d: '6 c/lado', how: 'Sentado en el suelo, rodillas a 90°, gira ambas piernas de un lado al otro.', easy: 'Manos apoyadas atrás', hard: 'Sin manos' },
+    { n: 'Equilibrio en un pie', d: '3 × 30 s c/pie', how: 'Cerca de una pared o silla. Mira un punto fijo.', easy: 'Toca la pared con un dedo', hard: 'Ojos cerrados unos segundos, con apoyo cerca' },
+    { n: 'Caminar talón-punta', d: '2 × 10 pasos', how: 'Camina en línea recta poniendo el talón justo delante de la punta del otro pie.', easy: 'Junto a una pared', hard: 'Hacia atrás' },
+    { n: 'Estiramiento de pantorrilla e isquios', d: '30 s c/u', how: 'Sin rebotes, respirando lento.', easy: '', hard: '' }
+  ]},
+  C: { name: 'Caminata enérgica', tag: 'C', mins: 30, intro: 'Ritmo en que puedes hablar pero no cantar. Suma a los 150 minutos semanales.', ex: [
+    { n: 'Calentar caminando suave', d: '5 min', how: 'Ritmo cómodo para entrar en calor.', easy: '', hard: '' },
+    { n: 'Caminata a buen ritmo', d: '20 min', how: 'Respiración más rápida, aún puedes conversar.', easy: 'Divídela en 2 de 10 min', hard: 'Incluye subidas o 1 min rápido cada 4' },
+    { n: 'Volver a la calma', d: '5 min', how: 'Baja el ritmo y estira pantorrillas al final.', easy: '', hard: '' }
+  ]}
+};
+// 0 = domingo
+const WEEK = [
+  { r: null, s: 'Descanso' }, { r: 'A', s: 'Fuerza A' }, { r: 'C', s: 'Caminata' }, { r: 'M', s: 'Movilidad' },
+  { r: 'B', s: 'Fuerza B' }, { r: 'C', s: 'Caminata' }, { r: 'libre', s: 'Libre' }
+];
+const DAYL = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+
+/* ---------- contenido: eventos ---------- */
+const EVENT_TYPES = ['Matrimonio', 'Cumpleaños', 'Asado', 'Fiesta', 'Comida de trabajo', 'Viaje', 'Otro'];
+const PHASES = [
+  { k: 'antes', t: 'Antes', sub: '2 días previos', tips: [
+    'Come normal y ordenado: verduras, proteína y fibra en cada comida.',
+    'No te saltes comidas para "ahorrar"; llegas con más hambre y bebes más rápido.',
+    'Toma agua durante el día y duerme bien las noches previas.',
+    'Haz tu rutina o una caminata; llegas con mejor ánimo.'
+  ]},
+  { k: 'dia', t: 'El día', sub: 'durante el evento', tips: [
+    'Come algo con proteína antes de salir.',
+    'Un vaso de agua entre cada trago.',
+    'Más o menos un trago por hora y elige lo que de verdad disfrutas.',
+    'Si bebes, no manejes: deja el transporte resuelto.'
+  ]},
+  { k: 'despues', t: 'Después', sub: '1–2 días siguientes', tips: [
+    'Hidrátate bien y suma caldos, fruta y comidas simples.',
+    'Camina 20–30 minutos; ayuda más que quedarse en cama.',
+    'Vuelve a tu horario de comidas sin compensar con ayunos.',
+    'Retoma la rutina de ejercicio al segundo día.'
+  ]}
+];
+
+/* ---------- estado UI ---------- */
+const TABS = [['hoy', 'Hoy'], ['comida', 'Comida'], ['mover', 'Mover'], ['eventos', 'Eventos'], ['sueno', 'Sueño'], ['salud', 'Salud']];
+let tab = (location.hash || '').replace('#', '');
+if (!TABS.some(t => t[0] === tab)) tab = ls.get('vaiven.tab', 'hoy');
+let saludTab = 'meds';
+let reco = ls.get('vaiven.reco', null);
+let recoBusy = false, recoErr = '';
+let doctorText = '', doctorBusy = false, doctorErr = '';
+
+function renderNav() {
+  $('#navIn').innerHTML = TABS.map(([k, l]) => `<button data-tab="${k}" ${k === tab ? 'aria-current="page"' : ''}>${svg(k)}<span>${l}</span></button>`).join('');
+}
+function go(k) {
+  tab = k; ls.set('vaiven.tab', k);
+  try { history.replaceState(null, '', '#' + k); } catch {}
+  renderNav(); render(); window.scrollTo(0, 0);
+}
+$('#navIn').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) go(b.dataset.tab); });
+
+function render() {
+  $('#topDate').textContent = fmtDay(today());
+  const m = $('#main');
+  if (Store.mode === 'config') { m.innerHTML = vSetup(); $('#fab').hidden = true; $('#modeNote').textContent = ''; return; }
+  $('#fab').hidden = false;
+  m.innerHTML = ({ hoy: vHoy, comida: vComida, mover: vMover, eventos: vEventos, sueno: vSueno, salud: vSalud }[tab] || vHoy)();
+  const note = {
+    loading: 'Cargando tus registros…',
+    sync: 'Actualizando…',
+    cloud: 'Tus registros se guardan en tu Google Drive.',
+    offline: 'Sin conexión con tu servidor: estás viendo la última copia guardada en el teléfono. Para registrar necesitas conexión.'
+  }[Store.mode] || '';
+  $('#modeNote').textContent = note;
+}
+function vSetup() {
+  const c = getCfg(); const e = Store.lastErr;
+  return `<section class="setup"><h2>Conectar Vaivén</h2>
+    <p class="muted">Vaivén guarda tus datos en tu Google Drive a través de tu propio servidor de Apps Script. Ingresa los dos datos que te dio la instalación. Solo se piden una vez en este teléfono.</p>
+    ${e && e.code === 'clave' ? '<p class="err">La clave no coincide con la de tu servidor.</p>' : ''}
+    <form class="f" id="cfgForm">
+      ${API_URL ? '' : fld('cfgUrl', 'Dirección del servidor (termina en /exec)', `<input id="cfgUrl" name="url" type="url" required value="${esc(c.url)}" placeholder="https://script.google.com/macros/s/…/exec">`)}
+      ${fld('cfgTok', 'Clave de la app', `<input id="cfgTok" name="token" required autocomplete="off" autocapitalize="off" value="${esc(c.token)}">`)}
+      <div class="row"><button class="btn" type="submit">Conectar</button>${c.url && c.token ? '<button class="btn ghost" type="button" data-act="cfg-back">Volver</button>' : ''}<span class="small muted" id="cfgMsg"></span></div>
+    </form></section>`;
+}
+async function saveCfg(form) {
+  const fd = Object.fromEntries(new FormData(form).entries());
+  const prev = ls.get('vaiven.cfg', {});
+  ls.set('vaiven.cfg', { url: (fd.url || prev.url || '').trim(), token: (fd.token || '').trim() });
+  const msg = $('#cfgMsg'); if (msg) msg.textContent = 'Probando conexión…';
+  await Store.init();
+  if (Store.mode === 'offline' && msg && msg.isConnected) msg.textContent = 'No pude conectar. Revisa la dirección y tu señal.';
+}
+document.addEventListener('submit', e => { if (e.target.id === 'cfgForm') { e.preventDefault(); saveCfg(e.target); } });
+$('#cfgBtn').onclick = () => { Store.mode = 'config'; Store.lastErr = null; render(); };
+
+/* ---------- vistas ---------- */
+function nextEvent() {
+  const t = today();
+  return Store.of('event').filter(e => e.date >= addDays(t, -2)).sort((a, b) => a.date.localeCompare(b.date))[0];
+}
+function phaseOf(ev) {
+  const d = diffDays(today(), ev.date);
+  if (d > 2) return { k: 'lejos', label: 'Faltan ' + d + ' días' };
+  if (d > 0) return { k: 'antes', label: d === 1 ? 'Es mañana · Preparación' : 'Faltan 2 días · Preparación' };
+  if (d === 0) return { k: 'dia', label: '¡Es hoy! Disfrútalo' };
+  return { k: 'despues', label: 'Recuperación' };
+}
+function greeting() {
+  const h = new Date().getHours();
+  return h < 12 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches';
+}
+function vHoy() {
+  const t = today();
+  const meals = Store.of('meal').filter(m => m.date === t);
+  const tragos = meals.reduce((s, m) => s + num(m.alcohol), 0);
+  const sl = Store.of('sleep').filter(s => s.date === t).sort((a, b) => b.createdAt - a.createdAt)[0];
+  const mins = Store.of('workout').filter(w => w.date === t).reduce((s, w) => s + num(w.minutos), 0);
+  const plan = WEEK[new Date().getDay()];
+  const ev = nextEvent();
+  let h = `<section class="hero"><h1>${greeting()}.</h1>
+    <p class="muted">Registra cómo vas y Vaivén te ayuda a disfrutar sin perder el equilibrio.</p>
+    <svg class="wave" viewBox="0 0 600 28" preserveAspectRatio="none" aria-hidden="true"><path class="w1" d="M0 14 Q 25 0 50 14 T 100 14 T 150 14 T 200 14 T 250 14 T 300 14 T 350 14 T 400 14 T 450 14 T 500 14 T 550 14 T 600 14 T 650 14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+  </section>
+  <div class="stats">
+    <div class="stat"><b>${meals.length}</b><span>comidas registradas</span></div>
+    <div class="stat"><b>${tragos || 0}</b><span>tragos hoy</span></div>
+    <div class="stat"><b>${sl ? sl.horas : '–'}</b><span>horas de sueño</span></div>
+    <div class="stat"><b>${mins}</b><span>min de movimiento</span></div>
+  </div>`;
+  if (ev) {
+    const p = phaseOf(ev); const d = diffDays(t, ev.date);
+    h += `<article class="card eventcard">
+      <div class="spread"><span class="label">Próximo evento</span><span class="phase">${esc(p.label)}</span></div>
+      <div class="row" style="align-items:flex-end;gap:14px"><span class="count">${d > 0 ? d : d === 0 ? 'Hoy' : '+' + (-d)}</span>${d > 0 ? '<span class="muted">días</span>' : ''}</div>
+      <div><h3>${esc(ev.nombre)}</h3><p class="muted small">${fmtDay(ev.date)} · ${esc(ev.tipo)}</p></div>
+      ${p.k !== 'lejos' ? `<ul class="list-plain small">${PHASES.find(x => x.k === p.k).tips.slice(0, 2).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      <div><button class="btn sm ghost" data-go="eventos">Ver plan del evento</button></div>
+    </article>`;
+  } else {
+    h += `<div class="empty"><p>¿Se viene un matrimonio, un cumpleaños o un asado? Agrégalo y Vaivén te prepara para el antes, el día y el después.</p><button class="btn cop sm" data-act="add-event">${svg('plus')}Agregar evento</button></div>`;
+  }
+  // ejercicio del día
+  const r = plan.r && ROUTINES[plan.r];
+  const doneToday = Store.of('workout').some(w => w.date === t);
+  h += `<article class="card"><div class="spread"><span class="label">Movimiento de hoy</span>${doneToday ? '<span class="chip teal">Hecho ✓</span>' : ''}</div>
+    <div><h3>${esc(r ? r.name : plan.r === 'libre' ? 'Día libre activo' : 'Descanso')}</h3>
+    <p class="muted small">${r ? r.mins + ' minutos · ' + esc(r.intro) : plan.r === 'libre' ? 'Bicicleta, pichanga, paseo largo o lo que disfrutes.' : 'Descansar también es parte del plan. Una caminata suave suma.'}</p></div>
+    <div class="row"><button class="btn sm" data-go="mover">Ver rutina</button><button class="btn sm ghost" data-act="add-workout">Registrar</button></div></article>`;
+  // recomendación IA
+  h += `<article class="card"><div class="spread"><span class="label">Tus próximos días</span>${svg('spark', '').replace('<svg', '<svg style="width:20px;height:20px;color:var(--sun)"')}</div>`;
+  if (reco && reco.data) {
+    const R = reco.data;
+    h += `<p><strong>${esc(R.titular || '')}</strong></p>`;
+    (Array.isArray(R.dias) ? R.dias : []).slice(0, 4).forEach(d => {
+      h += `<div class="reco-day"><div class="spread"><span class="dayhead">${isDate(d.fecha) ? fmtDay(d.fecha) : esc(d.fecha)}</span>${d.enfoque ? `<span class="chip sun">${esc(d.enfoque)}</span>` : ''}</div>
+      <ul class="small">${(Array.isArray(d.comidas) ? d.comidas : []).map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>`;
+    });
+    if (Array.isArray(R.tips) && R.tips.length) h += `<div class="reco-day"><span class="label">Además</span><ul class="small">${R.tips.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
+    h += `<p class="muted small">Generado el ${esc(reco.at || '')}. Son sugerencias generales, no una pauta médica.</p>`;
+  } else {
+    h += `<p class="muted">Vaivén mira lo que comiste, cómo dormiste y los eventos que vienen, y te sugiere qué comer en los próximos días.</p>`;
+  }
+  if (recoErr) h += `<p class="err">${esc(recoErr)}</p>`;
+  h += `<div><button class="btn sun" data-act="reco" ${recoBusy ? 'disabled' : ''}>${recoBusy ? '<span class="spinner"></span>Pensando…' : svg('spark') + (reco ? 'Actualizar sugerencias' : 'Pedir sugerencias')}</button></div></article>`;
+  return h;
+}
+
+function mealRow(m) {
+  const grupos = Array.isArray(m.grupos) ? m.grupos : [];
+  return `<div class="entry"><span class="dot" style="background:${num(m.alcohol) ? 'var(--copihue)' : 'var(--teal)'}"></span><div class="body">
+    <div class="t">${esc(m.momento ? m.momento + ' · ' : '')}${esc(m.desc)}</div>
+    <div class="row small muted" style="gap:6px;margin-top:4px">${m.kcal ? `<span class="tabular">~${esc(m.kcal)} kcal</span>` : ''}${num(m.alcohol) ? `<span class="chip cop">${esc(m.alcohol)} trago${num(m.alcohol) === 1 ? '' : 's'}</span>` : ''}${grupos.slice(0, 4).map(g => `<span class="chip">${esc(g)}</span>`).join('')}</div>
+    </div><button class="iconbtn" aria-label="Borrar" data-del="${esc(m.id)}">${svg('trash')}</button></div>`;
+}
+function vComida() {
+  const t = today();
+  const meals = Store.of('meal');
+  const week = meals.filter(m => m.date > addDays(t, -7));
+  const tragosSem = week.reduce((s, m) => s + num(m.alcohol), 0);
+  const diasVerdura = new Set(week.filter(m => (m.grupos || []).some(g => /verdur|fruta/i.test(g))).map(m => m.date)).size;
+  let h = `<div class="spread"><h2>Comida</h2></div>
+  <div class="row"><button class="btn" data-act="add-meal">${svg('plus')}Escribir</button><button class="btn sun" data-act="photo-meal">${svg('cam')}Con foto</button></div>
+  <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+    <div class="stat"><b>${week.length}</b><span>registros en 7 días</span></div>
+    <div class="stat"><b>${diasVerdura}/7</b><span>días con verduras o fruta</span></div>
+    <div class="stat"><b>${tragosSem}</b><span>tragos en 7 días</span></div>
+  </div>`;
+  if (!meals.length) {
+    h += `<div class="empty"><p>Aún no hay comidas. Escribe lo que comiste, sube una foto del plato o cuéntaselo a Vaivén en el chat.</p></div>`;
+    return h;
+  }
+  const days = [...new Set(meals.map(m => m.date))].sort().reverse().slice(0, 14);
+  days.forEach(d => {
+    const list = meals.filter(m => m.date === d).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    const kc = list.reduce((s, m) => s + num(m.kcal), 0);
+    h += `<section class="card"><div class="spread"><span class="dayhead">${d === t ? 'Hoy' : fmtDay(d)}</span>${kc ? `<span class="muted small tabular">~${Math.round(kc)} kcal</span>` : ''}</div><div>${list.map(mealRow).join('')}</div></section>`;
+  });
+  return h;
+}
+
+function vMover() {
+  const t = today(); const now = new Date(); const dow = now.getDay();
+  const monday = addDays(t, -((dow + 6) % 7));
+  const works = Store.of('workout');
+  let h = `<h2>Mover</h2><p class="muted">Plan base sin equipamiento para 48 años, siguiendo las recomendaciones de la OMS: al menos 150 minutos de actividad moderada a la semana y fuerza dos veces por semana, más equilibrio.</p>
+  <div class="week">`;
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(monday, i); const wd = parseD(d).getDay();
+    const done = works.some(w => w.date === d);
+    h += `<div class="wd ${d === t ? 'today' : ''}"><b>${DAYL[wd]}</b><span>${esc(WEEK[wd].s)}</span>${done ? '<span class="ok">✓</span>' : '<span class="ok" aria-hidden="true">&nbsp;</span>'}</div>`;
+  }
+  h += `</div>`;
+  const weekMins = works.filter(w => w.date >= monday).reduce((s, w) => s + num(w.minutos), 0);
+  h += `<div class="card"><div class="spread"><span class="label">Esta semana</span><span class="tabular"><strong>${weekMins}</strong> / 150 min</span></div>
+    <svg viewBox="0 0 300 10" class="chart" preserveAspectRatio="none" aria-hidden="true"><rect width="300" height="10" rx="5" fill="var(--surface-2)"/><rect width="${Math.min(300, weekMins / 150 * 300)}" height="10" rx="5" fill="var(--teal)"/></svg>
+    <div><button class="btn sm ghost" data-act="add-workout">${svg('plus')}Registrar actividad</button></div></div>`;
+  const todayR = WEEK[dow].r;
+  ['A', 'B', 'M', 'C'].forEach(k => {
+    const r = ROUTINES[k];
+    h += `<details class="routine" ${k === todayR ? 'open' : ''}><summary><span class="ico">${r.tag}</span><span style="flex:1;min-width:0"><h3>${esc(r.name)}${k === todayR ? ' <span class="chip teal">Hoy</span>' : ''}</h3><span class="muted small">${r.mins} min · ${esc(r.intro)}</span></span></summary>
+      ${r.ex.map(e => `<div class="ex"><strong>${esc(e.n)}</strong><span class="dose">${esc(e.d)}</span><p class="how">${esc(e.how)}</p>${(e.easy || e.hard) ? `<div class="lv">${e.easy ? `<span class="chip">Más fácil: ${esc(e.easy)}</span>` : ''}${e.hard ? `<span class="chip teal">Más difícil: ${esc(e.hard)}</span>` : ''}</div>` : ''}</div>`).join('')}
+      <div class="foot"><button class="btn sm" data-act="done-routine" data-r="${k}">Marcar como hecha</button><span class="muted small">Empieza con 5 min de calentamiento: marcha en el lugar y círculos de brazos.</span></div></details>`;
+  });
+  h += `<p class="notice">Si sientes dolor en el pecho, falta de aire inusual o mareo, detente y consulta a un médico. Si tienes alguna condición de salud o hace tiempo no entrenas, conversa con tu médico antes de subir la intensidad.</p>`;
+  return h;
+}
+
+function vEventos() {
+  const t = today();
+  const evs = Store.of('event').sort((a, b) => a.date.localeCompare(b.date));
+  const up = evs.filter(e => e.date >= addDays(t, -2));
+  const past = evs.filter(e => e.date < addDays(t, -2)).reverse();
+  let h = `<div class="spread"><h2>Eventos</h2><button class="btn cop sm" data-act="add-event">${svg('plus')}Agregar</button></div>
+  <p class="muted">Matrimonios, cumpleaños, asados. Prepárate antes, disfruta el día y recupérate después.</p>`;
+  if (!up.length) h += `<div class="empty"><p>No tienes eventos próximos.</p></div>`;
+  up.forEach(ev => {
+    const p = phaseOf(ev); const d = diffDays(t, ev.date);
+    h += `<article class="card"><div class="spread"><div style="min-width:0"><h3>${esc(ev.nombre)}</h3><p class="muted small">${fmtDay(ev.date)} · ${esc(ev.tipo)}</p></div><button class="iconbtn" aria-label="Borrar evento" data-del="${esc(ev.id)}">${svg('trash')}</button></div>
+      <div class="row"><span class="chip cop">${esc(p.label)}</span><span class="chip">Comida ${['', 'moderada', 'abundante', 'muy abundante'][ev.comida || 2]}</span><span class="chip">Alcohol ${['nada', 'poco', 'moderado', 'harto'][ev.alcohol ?? 2]}</span></div>
+      <div class="phases">${PHASES.map(ph => `<div class="ph ${ph.k === p.k ? 'on' : ''}"><strong>${ph.t}</strong><span class="muted small">${ph.sub}</span><ul>${ph.tips.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</div>
+      ${d >= 0 && d <= 7 ? '<p class="small muted">En la pestaña Hoy puedes pedir sugerencias de comida que ya consideran este evento.</p>' : ''}
+    </article>`;
+  });
+  if (past.length) {
+    h += `<section class="card"><span class="label">Eventos pasados</span>${past.slice(0, 10).map(e => `<div class="entry"><span class="dot" style="background:var(--copihue)"></span><div class="body"><div class="t">${esc(e.nombre)}</div><div class="small muted">${fmtDay(e.date)}</div></div><button class="iconbtn" aria-label="Borrar" data-del="${esc(e.id)}">${svg('trash')}</button></div>`).join('')}</section>`;
+  }
+  return h;
+}
+
+function vSueno() {
+  const t = today();
+  const all = Store.of('sleep');
+  const byDay = {};
+  all.forEach(s => { if (!byDay[s.date] || (s.createdAt || 0) > (byDay[s.date].createdAt || 0)) byDay[s.date] = s; });
+  const days = []; for (let i = 13; i >= 0; i--) days.push(addDays(t, -i));
+  const vals = days.map(d => byDay[d] ? num(byDay[d].horas) : null);
+  const have = vals.filter(v => v != null);
+  const avg7 = (() => { const v = vals.slice(7).filter(x => x != null); return v.length ? (v.reduce((a, b) => a + b, 0) / v.length) : null; })();
+  // gráfico
+  const W = 340, H = 170, L = 26, B = 22, top = 8, maxH = 10;
+  const bw = (W - L - 4) / 14;
+  const y = h => top + (H - B - top) * (1 - Math.min(h, maxH) / maxH);
+  let bars = '';
+  vals.forEach((v, i) => {
+    const x = L + i * bw + bw * .18, w = bw * .64;
+    if (v != null) {
+      const ok = v >= 7 && v <= 9;
+      bars += `<rect x="${x.toFixed(1)}" y="${y(v).toFixed(1)}" width="${w.toFixed(1)}" height="${(H - B - y(v)).toFixed(1)}" rx="3" fill="${ok ? 'var(--teal)' : 'var(--sun)'}"><title>${days[i]}: ${v} h</title></rect>`;
+    }
+    if (i % 2 === 1 || i === 13) bars += `<text x="${(L + i * bw + bw / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle">${parseD(days[i]).getDate()}</text>`;
+  });
+  let grid = '';
+  [0, 5, 7, 9].forEach(g => { grid += `<line x1="${L}" x2="${W - 2}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)" stroke-width="1"/><text x="${L - 6}" y="${y(g) + 4}" text-anchor="end">${g}</text>`; });
+  const band = `<rect x="${L}" y="${y(9)}" width="${W - L - 2}" height="${y(7) - y(9)}" fill="var(--teal-soft)" opacity=".7"/>`;
+  let h = `<div class="spread"><h2>Sueño</h2><button class="btn sm" data-act="add-sleep">${svg('plus')}Registrar noche</button></div>
+  <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    <div class="stat"><b>${avg7 != null ? avg7.toFixed(1) : '–'}</b><span>horas promedio, últimos 7 días</span></div>
+    <div class="stat"><b>${have.filter(v => v >= 7).length}</b><span>noches de 7 h o más (14 días)</span></div>
+  </div>
+  <div class="card"><div class="spread"><span class="label">Últimos 14 días</span><span class="small muted">franja: 7–9 h</span></div>
+    ${have.length ? `<div style="overflow-x:auto"><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Horas de sueño de los últimos 14 días">${band}${grid}${bars}</svg></div>` : `<div class="empty"><p>Registra tu primera noche: a qué hora te acostaste y a qué hora despertaste.</p></div>`}
+  </div>`;
+  const list = all.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+  if (list.length) h += `<section class="card"><span class="label">Registros</span>${list.map(s => `<div class="entry"><span class="dot" style="background:${s.horas >= 7 ? 'var(--teal)' : 'var(--sun)'}"></span><div class="body"><div class="t tabular">${esc(s.horas)} h · calidad ${esc(s.calidad)}/5</div><div class="small muted"><span>${fmtDay(s.date)}</span> · ${esc(s.dormir || '')}–${esc(s.despertar || '')}${s.nota ? ' · ' + esc(s.nota) : ''}</div></div><button class="iconbtn" aria-label="Borrar" data-del="${esc(s.id)}">${svg('trash')}</button></div>`).join('')}</section>`;
+  h += `<p class="notice">Para adultos se recomiendan 7 a 9 horas. Después de un evento con alcohol el sueño suele ser más liviano aunque duermas más horas.</p>`;
+  return h;
+}
+
+function vSalud() {
+  let h = `<h2>Salud</h2>
+  <div class="seg" role="group" aria-label="Sección de salud">
+    ${[['meds', 'Medicamentos'], ['visits', 'Consultas'], ['sym', 'Síntomas']].map(([k, l]) => `<button data-seg="${k}" aria-pressed="${saludTab === k}">${l}</button>`).join('')}
+  </div>`;
+  if (saludTab === 'meds') {
+    const meds = Store.of('med').sort((a, b) => (b.activo ? 1 : 0) - (a.activo ? 1 : 0));
+    h += `<div><button class="btn sm" data-act="add-med">${svg('plus')}Agregar medicamento</button></div>`;
+    if (!meds.length) h += `<div class="empty"><p>Anota lo que tomas: nombre, dosis y horario. Te sirve para mostrárselo a tu médico.</p></div>`;
+    else h += `<section class="card">${meds.map(m => `<div class="entry"><span class="dot" style="background:${m.activo ? 'var(--good)' : 'var(--line)'}"></span><div class="body"><div class="t">${esc(m.nombre)} ${m.dosis ? '· ' + esc(m.dosis) : ''}</div><div class="small muted">${esc(m.horario || '')}${m.desde ? ' · desde ' + fmtShort(m.desde) : ''}${m.hasta ? ' hasta ' + fmtShort(m.hasta) : ''}</div><div style="margin-top:6px"><button class="btn sm ghost" data-toggle-med="${esc(m.id)}">${m.activo ? 'Marcar como suspendido' : 'Marcar como activo'}</button></div></div><button class="iconbtn" aria-label="Borrar" data-del="${esc(m.id)}">${svg('trash')}</button></div>`).join('')}</section>`;
+  } else if (saludTab === 'visits') {
+    const v = Store.of('visit').sort((a, b) => b.date.localeCompare(a.date));
+    h += `<div><button class="btn sm" data-act="add-visit">${svg('plus')}Agregar consulta</button></div>`;
+    if (!v.length) h += `<div class="empty"><p>Registra tus consultas: especialidad, qué te dijeron y cuándo es el control.</p></div>`;
+    else h += `<section class="card">${v.map(x => `<div class="entry"><span class="dot" style="background:var(--teal)"></span><div class="body"><div class="t">${esc(x.especialidad || 'Consulta')}${x.profesional ? ' · ' + esc(x.profesional) : ''}</div><div class="small muted">${fmtDay(x.date)}</div>${x.motivo ? `<p class="small">${esc(x.motivo)}</p>` : ''}${x.notas ? `<p class="small muted">${esc(x.notas)}</p>` : ''}${x.proxima ? `<span class="chip sun">Control: ${fmtShort(x.proxima)}</span>` : ''}</div><button class="iconbtn" aria-label="Borrar" data-del="${esc(x.id)}">${svg('trash')}</button></div>`).join('')}</section>`;
+  } else {
+    const s = Store.of('symptom').sort((a, b) => b.date.localeCompare(a.date));
+    h += `<div><button class="btn sm" data-act="add-symptom">${svg('plus')}Anotar síntoma</button></div>`;
+    if (!s.length) h += `<div class="empty"><p>Anota síntomas con su intensidad. Con el tiempo verás patrones, por ejemplo después de un evento.</p></div>`;
+    else h += `<section class="card">${s.map(x => `<div class="entry"><span class="dot" style="background:${x.intensidad >= 7 ? 'var(--copihue)' : x.intensidad >= 4 ? 'var(--sun)' : 'var(--teal)'}"></span><div class="body"><div class="t">${esc(x.sintoma)} <span class="muted tabular">· ${esc(x.intensidad)}/10</span></div><div class="small muted">${fmtDay(x.date)}</div>${x.notas ? `<p class="small muted">${esc(x.notas)}</p>` : ''}</div><button class="iconbtn" aria-label="Borrar" data-del="${esc(x.id)}">${svg('trash')}</button></div>`).join('')}</section>`;
+  }
+  h += `<article class="card"><span class="label">Para tu próxima consulta</span><p class="muted small">Vaivén ordena tus medicamentos, síntomas recientes y hábitos en un resumen breve para mostrarle a tu médico.</p>
+    ${doctorErr ? `<p class="err">${esc(doctorErr)}</p>` : ''}
+    ${doctorText ? `<div style="white-space:pre-wrap;background:var(--surface-2);border-radius:10px;padding:12px" id="docText" class="small">${esc(doctorText)}</div>` : ''}
+    <div class="row"><button class="btn" data-act="doctor" ${doctorBusy ? 'disabled' : ''}>${doctorBusy ? '<span class="spinner"></span>Preparando…' : svg('spark') + 'Preparar resumen'}</button>${doctorText ? `<button class="btn ghost sm" data-act="copy-doc">${svg('copy')}Copiar</button>` : ''}</div></article>
+  <p class="notice">Vaivén registra y ordena tu información, pero no reemplaza a tu médico ni sirve para emergencias. Ante una urgencia llama al 131 (SAMU).</p>`;
+  return h;
+}
+
+/* ---------- hojas y formularios ---------- */
+function openSheet(title, inner, mount) {
+  const L = $('#layer');
+  L.innerHTML = `<div class="overlay" id="ov"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="spread"><h2 style="font-size:1.3rem">${esc(title)}</h2><button class="iconbtn" data-close aria-label="Cerrar">${svg('x')}</button></div>${inner}</div></div>`;
+  const ov = $('#ov');
+  ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-close]')) closeSheet(); });
+  const first = ov.querySelector('input,select,textarea'); if (first) setTimeout(() => first.focus(), 30);
+  if (mount) mount(ov);
+}
+function closeSheet() { $('#layer').innerHTML = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('#chat')) closeChat(); else closeSheet(); } });
+
+const fld = (id, label, input) => `<div class="fld"><label for="${id}">${label}</label>${input}</div>`;
+const sel = (id, opts, v) => `<select id="${id}" name="${id}">${opts.map(o => { const [val, lab] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(val)}" ${String(val) === String(v) ? 'selected' : ''}>${esc(lab)}</option>`; }).join('')}</select>`;
+const MOMENTOS = ['Desayuno', 'Almuerzo', 'Once', 'Cena', 'Colación', 'Evento'];
+function momentoAhora() { const h = new Date().getHours(); return h < 11 ? 'Desayuno' : h < 16 ? 'Almuerzo' : h < 20 ? 'Once' : 'Cena'; }
+function formBind(ov, fn) {
+  const f = ov.querySelector('form');
+  f.addEventListener('submit', async e => {
+    e.preventDefault(); const fd = Object.fromEntries(new FormData(f).entries());
+    const b = f.querySelector('[type=submit]'); if (b) b.disabled = true;
+    try { await fn(fd); closeSheet(); } catch (err) { if (b) b.disabled = false; const p = f.querySelector('.err') || Object.assign(document.createElement('p'), { className: 'err' }); p.textContent = 'No se pudo guardar. Revisa tu conexión e intenta de nuevo.'; f.append(p); }
+  });
+}
+
+function sheetMeal(pre = {}) {
+  openSheet('Registrar comida', `<form class="f">
+    <div class="grid2">${fld('date', 'Fecha', `<input type="date" id="date" name="date" value="${esc(pre.date || today())}" required>`)}${fld('momento', 'Momento', sel('momento', MOMENTOS, pre.momento || momentoAhora()))}</div>
+    ${fld('desc', '¿Qué comiste o tomaste?', `<textarea id="desc" name="desc" required placeholder="Ej.: porotos con riendas, ensalada chilena y un vaso de vino">${esc(pre.desc || '')}</textarea>`)}
+    <div class="grid2">${fld('kcal', 'Calorías aprox. (opcional)', `<input type="number" inputmode="numeric" min="0" id="kcal" name="kcal" value="${esc(pre.kcal || '')}">`)}${fld('alcohol', 'Tragos con alcohol', `<input type="number" inputmode="decimal" min="0" step="0.5" id="alcohol" name="alcohol" value="${esc(pre.alcohol || 0)}">`)}</div>
+    <input type="hidden" name="grupos" value="${esc((pre.grupos || []).join('|'))}">
+    <p class="small muted">Si dejas las calorías en blanco, Vaivén puede estimarlas al guardar.</p>
+    <div class="row"><button class="btn" type="submit">Guardar</button><label class="row small"><input type="checkbox" name="estimar" ${pre.kcal ? '' : 'checked'}> Estimar con IA</label></div>
+  </form>`, ov => formBind(ov, async d => {
+    let o = { kind: 'meal', date: d.date, momento: d.momento, desc: d.desc.trim(), kcal: Math.round(num(d.kcal)) || null, alcohol: num(d.alcohol), grupos: d.grupos ? d.grupos.split('|').filter(Boolean) : [] };
+    if (d.estimar && !o.kcal) {
+      try {
+        const r = await aiJSON(`${PERSONA}\nEstima esta comida chilena descrita por el usuario. Responde SOLO JSON: {"kcal": número entero aproximado del total, "grupos": [de 1 a 4 entre "verduras","frutas","proteína","legumbres","cereales","lácteos","grasas","dulces","ultraprocesados","alcohol","bebidas azucaradas","agua/infusiones"], "tragos": número de tragos con alcohol (0 si no hay)}.\nComida: ${o.desc}`);
+        if (r && isFinite(r.kcal)) o.kcal = Math.round(r.kcal);
+        if (r && Array.isArray(r.grupos)) o.grupos = r.grupos.map(String).slice(0, 5);
+        if (r && !o.alcohol && isFinite(r.tragos)) o.alcohol = num(r.tragos);
+      } catch {}
+    }
+    await Store.add(o);
+  }));
+}
+
+async function sheetPhoto() {
+  const lim = await imageLimits();
+  openSheet('Comida con foto', `<div class="f" id="phf">
+    ${lim ? '' : '<p class="notice">Para analizar fotos, primero configura la conexión con tu servidor (engranaje arriba a la derecha). Mientras tanto puedes escribir la comida.</p>'}
+    ${fld('ph', 'Foto del plato o bebida', `<input type="file" id="ph" accept="${esc(lim ? lim.mediaTypes.join(',') : 'image/*')}" ${lim ? '' : 'disabled'}>`)}
+    ${fld('phnote', 'Detalle opcional', `<input id="phnote" placeholder="Ej.: es media porción, la bebida es zero">`)}
+    <div class="row"><button class="btn sun" id="phgo" ${lim ? '' : 'disabled'}>${svg('spark')}Analizar foto</button><button class="btn ghost" id="phman">Escribir en vez de foto</button></div>
+    <div id="phout"></div></div>`, ov => {
+    $('#phman', ov).onclick = () => { closeSheet(); sheetMeal(); };
+    $('#phgo', ov).onclick = async () => {
+      const f = $('#ph', ov).files[0]; const out = $('#phout', ov); const b = $('#phgo', ov);
+      if (!f) { out.innerHTML = '<p class="err">Elige una foto primero.</p>'; return; }
+      if (lim && f.size > lim.maxInputBytes) { out.innerHTML = '<p class="err">La foto es muy pesada. Prueba con una de menor tamaño.</p>'; return; }
+      b.disabled = true; b.innerHTML = '<span class="spinner"></span>Mirando tu plato…'; out.innerHTML = '';
+      try {
+        const r = await aiJSON(`${PERSONA}\nLa imagen adjunta muestra una comida o bebida que el usuario consumió. ${$('#phnote', ov).value ? 'Nota del usuario: ' + $('#phnote', ov).value : ''}\nIdentifica lo que ves con porciones aproximadas. Responde SOLO JSON: {"desc": "descripción breve en español de Chile, ej. 'Completo italiano y bebida'", "kcal": entero aproximado del total, "tragos": número de tragos con alcohol (0 si no hay), "grupos": [1 a 4 entre "verduras","frutas","proteína","legumbres","cereales","lácteos","grasas","dulces","ultraprocesados","alcohol","bebidas azucaradas","agua/infusiones"], "comentario": "una frase amable y útil, sin culpa"}. Si la imagen no es comida, usa desc "" y explica en comentario.`, [f]);
+        if (!r || !r.desc) { out.innerHTML = `<p class="err">${esc(r && r.comentario || 'No reconocí comida en la foto.')}</p>`; b.disabled = false; b.innerHTML = svg('spark') + 'Analizar foto'; return; }
+        closeSheet();
+        sheetMeal({ desc: r.desc, kcal: Math.round(num(r.kcal)) || '', alcohol: num(r.tragos), grupos: Array.isArray(r.grupos) ? r.grupos.map(String) : [] });
+        if (r.comentario) { const p = document.createElement('p'); p.className = 'notice'; p.textContent = r.comentario; $('#ov form').prepend(p); }
+      } catch (e) { out.innerHTML = `<p class="err">${esc(aiError(e))}</p>`; b.disabled = false; b.innerHTML = svg('spark') + 'Analizar foto'; }
+    };
+  });
+}
+
+function sheetEvent() {
+  openSheet('Nuevo evento', `<form class="f">
+    ${fld('nombre', 'Nombre', `<input id="nombre" name="nombre" required placeholder="Ej.: Matrimonio de la Cata">`)}
+    <div class="grid2">${fld('date', 'Fecha', `<input type="date" id="date" name="date" value="${addDays(today(), 7)}" required>`)}${fld('tipo', 'Tipo', sel('tipo', EVENT_TYPES, 'Matrimonio'))}</div>
+    <div class="grid2">${fld('comida', 'Comida esperada', sel('comida', [[1, 'Moderada'], [2, 'Abundante'], [3, 'Muy abundante']], 2))}${fld('alcohol', 'Alcohol esperado', sel('alcohol', [[0, 'Nada'], [1, 'Poco'], [2, 'Moderado'], [3, 'Harto']], 2))}</div>
+    <button class="btn cop" type="submit">Guardar evento</button></form>`,
+    ov => formBind(ov, d => Store.add({ kind: 'event', nombre: d.nombre.trim(), date: d.date, tipo: d.tipo, comida: +d.comida, alcohol: +d.alcohol })));
+}
+function sheetWorkout(pre = {}) {
+  openSheet('Registrar actividad', `<form class="f">
+    <div class="grid2">${fld('date', 'Fecha', `<input type="date" id="date" name="date" value="${esc(pre.date || today())}" required>`)}${fld('minutos', 'Minutos', `<input type="number" inputmode="numeric" min="1" id="minutos" name="minutos" value="${esc(pre.minutos || 30)}" required>`)}</div>
+    ${fld('tipo', 'Actividad', sel('tipo', ['Fuerza A', 'Fuerza B', 'Movilidad y equilibrio', 'Caminata enérgica', 'Bicicleta', 'Fútbol', 'Natación', 'Otra'], pre.tipo || 'Caminata enérgica'))}
+    ${fld('nota', 'Nota (opcional)', `<input id="nota" name="nota" placeholder="Ej.: me costó la plancha">`)}
+    <button class="btn" type="submit">Guardar</button></form>`,
+    ov => formBind(ov, d => Store.add({ kind: 'workout', date: d.date, tipo: d.tipo, minutos: Math.round(num(d.minutos)), nota: d.nota })));
+}
+function sheetSleep() {
+  openSheet('Registrar noche', `<form class="f">
+    ${fld('date', 'Día en que despertaste', `<input type="date" id="date" name="date" value="${today()}" required>`)}
+    <div class="grid2">${fld('dormir', 'Me acosté', `<input type="time" id="dormir" name="dormir" value="23:30" required>`)}${fld('despertar', 'Desperté', `<input type="time" id="despertar" name="despertar" value="07:00" required>`)}</div>
+    ${fld('calidad', 'Cómo dormiste', sel('calidad', [[1, '1 · Muy mal'], [2, '2 · Mal'], [3, '3 · Regular'], [4, '4 · Bien'], [5, '5 · Muy bien']], 3))}
+    ${fld('nota', 'Nota (opcional)', `<input id="nota" name="nota" placeholder="Ej.: desperté a las 4">`)}
+    <button class="btn" type="submit">Guardar</button></form>`,
+    ov => formBind(ov, d => Store.add({ kind: 'sleep', date: d.date, dormir: d.dormir, despertar: d.despertar, horas: sleepHours(d.dormir, d.despertar), calidad: +d.calidad, nota: d.nota })));
+}
+function sheetMed() {
+  openSheet('Agregar medicamento', `<form class="f">
+    ${fld('nombre', 'Nombre', `<input id="nombre" name="nombre" required>`)}
+    <div class="grid2">${fld('dosis', 'Dosis', `<input id="dosis" name="dosis" placeholder="Ej.: 10 mg">`)}${fld('horario', 'Horario', `<input id="horario" name="horario" placeholder="Ej.: 1 en la mañana">`)}</div>
+    <div class="grid2">${fld('desde', 'Desde', `<input type="date" id="desde" name="desde" value="${today()}">`)}${fld('hasta', 'Hasta (opcional)', `<input type="date" id="hasta" name="hasta">`)}</div>
+    <button class="btn" type="submit">Guardar</button></form>`,
+    ov => formBind(ov, d => Store.add({ kind: 'med', nombre: d.nombre.trim(), dosis: d.dosis, horario: d.horario, desde: d.desde, hasta: d.hasta, activo: true, date: d.desde || today() })));
+}
+function sheetVisit() {
+  openSheet('Agregar consulta', `<form class="f">
+    <div class="grid2">${fld('date', 'Fecha', `<input type="date" id="date" name="date" value="${today()}" required>`)}${fld('especialidad', 'Especialidad', `<input id="especialidad" name="especialidad" placeholder="Ej.: Medicina general">`)}</div>
+    ${fld('profesional', 'Profesional / centro', `<input id="profesional" name="profesional">`)}
+    ${fld('motivo', 'Motivo', `<input id="motivo" name="motivo">`)}
+    ${fld('notas', 'Indicaciones', `<textarea id="notas" name="notas"></textarea>`)}
+    ${fld('proxima', 'Próximo control (opcional)', `<input type="date" id="proxima" name="proxima">`)}
+    <button class="btn" type="submit">Guardar</button></form>`,
+    ov => formBind(ov, d => Store.add({ kind: 'visit', date: d.date, especialidad: d.especialidad, profesional: d.profesional, motivo: d.motivo, notas: d.notas, proxima: d.proxima })));
+}
+function sheetSymptom() {
+  openSheet('Anotar síntoma', `<form class="f">
+    <div class="grid2">${fld('date', 'Fecha', `<input type="date" id="date" name="date" value="${today()}" required>`)}${fld('intensidad', 'Intensidad (1–10)', `<input type="number" min="1" max="10" id="intensidad" name="intensidad" value="4" required>`)}</div>
+    ${fld('sintoma', 'Síntoma', `<input id="sintoma" name="sintoma" required placeholder="Ej.: acidez, dolor de rodilla">`)}
+    ${fld('notas', 'Notas (opcional)', `<textarea id="notas" name="notas"></textarea>`)}
+    <button class="btn" type="submit">Guardar</button></form>`,
+    ov => formBind(ov, d => Store.add({ kind: 'symptom', date: d.date, sintoma: d.sintoma.trim(), intensidad: Math.max(1, Math.min(10, Math.round(num(d.intensidad)))), notas: d.notas })));
+}
+
+/* ---------- acciones IA ---------- */
+async function doReco() {
+  recoBusy = true; recoErr = ''; render();
+  try {
+    const t = today();
+    const r = await aiJSON(`${PERSONA}\nCon el historial del usuario, sugiere qué comer los próximos 4 días (desde hoy ${t}), considerando lo que ha comido, su sueño, su ejercicio y si hay eventos cerca (antes de un evento: comer ordenado sin saltarse comidas; después: hidratación y comidas simples). Usa comidas chilenas, caseras y fáciles. Si no hay historial, da sugerencias equilibradas generales.\n\n${historySummary(7)}\n\nResponde SOLO JSON: {"titular": "una frase amable que resuma el foco", "dias": [{"fecha":"YYYY-MM-DD","enfoque":"2-3 palabras","comidas":["Desayuno: …","Almuerzo: …","Once/Cena: …"]}] (4 días), "tips": ["máximo 3 consejos breves"]}`);
+    if (!r || !Array.isArray(r.dias)) throw { code: 'invalid_json' };
+    reco = { at: new Date().toLocaleString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }), data: r };
+    ls.set('vaiven.reco', reco);
+  } catch (e) { recoErr = aiError(e); }
+  recoBusy = false; render();
+}
+async function doDoctor() {
+  doctorBusy = true; doctorErr = ''; render();
+  try {
+    const meds = Store.of('med').map(m => `- ${m.nombre} ${m.dosis || ''} ${m.horario || ''} (${m.activo ? 'activo' : 'suspendido'})`).join('\n') || '- (ninguno registrado)';
+    const sym = Store.of('symptom').filter(s => s.date >= addDays(today(), -60)).sort((a, b) => a.date.localeCompare(b.date)).map(s => `- ${s.date}: ${s.sintoma} ${s.intensidad}/10 ${s.notas || ''}`).join('\n') || '- (ninguno)';
+    const vis = Store.of('visit').sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5).map(v => `- ${v.date}: ${v.especialidad || ''} ${v.motivo || ''}. Indicaciones: ${v.notas || '-'}`).join('\n') || '- (ninguna)';
+    doctorText = await aiText(`${PERSONA}\nPrepara un resumen breve y ordenado (máximo 200 palabras, texto plano sin markdown) que el usuario pueda mostrarle a su médico. Secciones: Medicamentos actuales, Síntomas recientes, Hábitos de las últimas 2 semanas (sueño, ejercicio, alcohol aproximado), Preguntas sugeridas para la consulta (2-3). No interpretes ni diagnostiques.\n\nMEDICAMENTOS:\n${meds}\nSÍNTOMAS (60 días):\n${sym}\nCONSULTAS:\n${vis}\n\n${historySummary(14)}`);
+  } catch (e) { doctorErr = aiError(e); }
+  doctorBusy = false; render();
+}
+
+/* ---------- chat ---------- */
+let chatLog = [{ who: 'bot', text: 'Hola, soy Vaivén. Cuéntame como le contarías a un amigo: qué comiste, cómo dormiste, si entrenaste, un síntoma o un evento que se viene. Yo lo ordeno y lo guardo cuando me confirmes.' }];
+let chatPending = []; let chatBusy = false; let chatImg = null;
+const KIND_LABEL = { meal: 'Comida', sleep: 'Sueño', workout: 'Actividad', event: 'Evento', symptom: 'Síntoma', visit: 'Consulta', med: 'Medicamento' };
+function describeEntry(e) {
+  switch (e.kind) {
+    case 'meal': return `${e.momento ? e.momento + ': ' : ''}${e.desc}${e.kcal ? ' (~' + e.kcal + ' kcal)' : ''}${e.alcohol ? ' · ' + e.alcohol + ' tragos' : ''}`;
+    case 'sleep': return `${e.horas} h (${e.dormir}–${e.despertar}), calidad ${e.calidad}/5`;
+    case 'workout': return `${e.tipo}, ${e.minutos} min`;
+    case 'event': return `${e.nombre} · ${fmtShort(e.date)}`;
+    case 'symptom': return `${e.sintoma} ${e.intensidad}/10`;
+    case 'visit': return `${e.especialidad || 'Consulta'} ${e.motivo ? '· ' + e.motivo : ''}`;
+    case 'med': return `${e.nombre} ${e.dosis || ''} ${e.horario || ''}`;
+  }
+  return '';
+}
+function normEntry(r) {
+  if (!r || !KIND_LABEL[r.tipo_registro || r.kind]) return null;
+  const k = r.tipo_registro || r.kind; const t = today();
+  const date = isDate(r.fecha) ? r.fecha : t;
+  if (k === 'meal') { if (!r.descripcion) return null; return { kind: k, date, momento: MOMENTOS.includes(r.momento) ? r.momento : momentoAhora(), desc: String(r.descripcion), kcal: Math.round(num(r.kcal)) || null, alcohol: num(r.tragos), grupos: Array.isArray(r.grupos) ? r.grupos.map(String).slice(0, 5) : [] }; }
+  if (k === 'sleep') { const dormir = isTime(r.dormir) ? r.dormir : null, desp = isTime(r.despertar) ? r.despertar : null; let horas = dormir && desp ? sleepHours(dormir, desp) : num(r.horas); if (!horas) return null; return { kind: k, date, dormir: dormir || '', despertar: desp || '', horas, calidad: Math.max(1, Math.min(5, Math.round(num(r.calidad)) || 3)), nota: r.nota || '' }; }
+  if (k === 'workout') return { kind: k, date, tipo: String(r.actividad || 'Actividad'), minutos: Math.round(num(r.minutos)) || 30, nota: r.nota || '' };
+  if (k === 'event') { if (!r.nombre) return null; return { kind: k, date, nombre: String(r.nombre), tipo: EVENT_TYPES.includes(r.tipo_evento) ? r.tipo_evento : 'Otro', comida: Math.max(1, Math.min(3, Math.round(num(r.comida)) || 2)), alcohol: Math.max(0, Math.min(3, Math.round(num(r.alcohol)))) }; }
+  if (k === 'symptom') { if (!r.sintoma) return null; return { kind: k, date, sintoma: String(r.sintoma), intensidad: Math.max(1, Math.min(10, Math.round(num(r.intensidad)) || 5)), notas: r.nota || '' }; }
+  if (k === 'visit') return { kind: k, date, especialidad: r.especialidad || '', profesional: r.profesional || '', motivo: r.motivo || '', notas: r.nota || '', proxima: isDate(r.proximo_control) ? r.proximo_control : '' };
+  if (k === 'med') { if (!r.nombre) return null; return { kind: k, nombre: String(r.nombre), dosis: r.dosis || '', horario: r.horario || '', desde: date, hasta: '', activo: true, date }; }
+  return null;
+}
+function openChat() {
+  const L = document.createElement('div'); L.id = 'chat'; L.className = 'chat';
+  L.innerHTML = `<header><button class="iconbtn" id="chClose" aria-label="Cerrar chat">${svg('x')}</button><div class="brand" style="font-size:1.15rem;color:var(--teal-ink)">Vaivén</div><span class="small" style="margin-left:auto;opacity:.85">tu bitácora conversada</span></header>
+  <div class="msgs" id="msgs"></div>
+  <div class="composer"><div class="thumb" id="chThumb" hidden></div><div class="in">
+    <label class="btn ghost attach" title="Adjuntar foto" aria-label="Adjuntar foto" style="padding:10px">${svg('cam')}<input type="file" id="chFile" accept="image/*"></label>
+    <textarea id="chIn" rows="1" placeholder="Ej.: dormí de 0:30 a 7, almorcé cazuela y el sábado tengo un matrimonio"></textarea>
+    <button class="btn" id="chSend" aria-label="Enviar" style="padding:10px 14px">${svg('send')}</button></div></div>`;
+  document.body.append(L); document.body.style.overflow = 'hidden';
+  $('#chClose').onclick = closeChat;
+  $('#chSend').onclick = sendChat;
+  $('#chIn').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } });
+  $('#chFile').onchange = e => { chatImg = e.target.files[0] || null; const th = $('#chThumb'); th.hidden = !chatImg; th.innerHTML = chatImg ? `Foto lista: ${esc(chatImg.name)} <button class="iconbtn" id="chRm" aria-label="Quitar foto">${svg('x')}</button>` : ''; if (chatImg) $('#chRm').onclick = () => { chatImg = null; $('#chFile').value = ''; th.hidden = true; }; };
+  $('#msgs').addEventListener('click', async e => {
+    const b = e.target.closest('[data-pend]'); if (!b) return;
+    if (b.dataset.pend === 'save') {
+      b.disabled = true; const items = chatPending; chatPending = [];
+      try { for (const it of items) await Store.add(it); chatLog.push({ who: 'bot', text: items.length === 1 ? 'Listo, quedó guardado.' : `Listo, guardé ${items.length} registros.` }); }
+      catch { chatLog.push({ who: 'bot', text: 'No pude guardar. Revisa tu conexión e intenta de nuevo.' }); chatPending = items; }
+    } else { chatPending = []; chatLog.push({ who: 'bot', text: 'Ok, no guardé nada.' }); }
+    renderChat();
+  });
+  renderChat(); setTimeout(() => $('#chIn').focus(), 50);
+}
+function closeChat() { const c = $('#chat'); if (c) c.remove(); document.body.style.overflow = ''; }
+function renderChat() {
+  const m = $('#msgs'); if (!m) return;
+  m.innerHTML = chatLog.map(c => `<div class="msg ${c.who}">${c.img ? `<img src="${c.img}" alt="Foto enviada">` : ''}${esc(c.text)}</div>`).join('')
+    + (chatPending.length ? `<div class="pending"><span class="label">¿Guardo esto?</span>${chatPending.map(p => `<div class="it"><span class="chip teal">${KIND_LABEL[p.kind]}</span><span>${esc(describeEntry(p))}${p.date && p.date !== today() && p.kind !== 'event' ? ' · ' + fmtShort(p.date) : ''}</span></div>`).join('')}<div class="row"><button class="btn sm" data-pend="save">Guardar</button><button class="btn sm ghost" data-pend="no">Descartar</button></div></div>` : '')
+    + (chatBusy ? `<div class="msg bot"><span class="spinner"></span></div>` : '');
+  m.scrollTop = m.scrollHeight;
+}
+async function sendChat() {
+  const inp = $('#chIn'); const text = inp.value.trim();
+  if ((!text && !chatImg) || chatBusy) return;
+  const img = chatImg; let url = null;
+  if (img) { try { url = URL.createObjectURL(img); } catch {} }
+  chatLog.push({ who: 'me', text: text || '(foto)', img: url });
+  inp.value = ''; chatImg = null; $('#chFile').value = ''; $('#chThumb').hidden = true;
+  chatBusy = true; chatPending = []; renderChat();
+  const convo = chatLog.slice(-10).filter(c => !c.img || c.who === 'me').map(c => (c.who === 'me' ? 'Usuario: ' : 'Vaivén: ') + c.text).join('\n');
+  const t = today();
+  try {
+    const r = await aiJSON(`${PERSONA}
+Estás en un chat tipo WhatsApp. Tu tarea: responder breve y cálido (1-3 frases) y extraer registros de lo que el usuario cuenta. Hoy es ${t} (${fmtDay(t)}), hora ${new Date().toTimeString().slice(0, 5)}. Interpreta "ayer", "anoche", "el sábado" como fechas YYYY-MM-DD. Si falta un dato clave, pregúntalo en la respuesta y no inventes el registro. Si el usuario solo conversa o pregunta, responde con ayuda útil y registros vacíos. ${img ? 'Se adjunta una foto: si es comida, regístrala estimando porciones.' : ''}
+
+Contexto reciente del usuario:
+${historySummary(3)}
+
+Conversación:
+${convo}
+
+Responde SOLO JSON: {"respuesta":"texto","registros":[...]} donde cada registro es uno de:
+{"tipo_registro":"meal","fecha":"YYYY-MM-DD","momento":"Desayuno|Almuerzo|Once|Cena|Colación|Evento","descripcion":"...","kcal":entero aprox,"tragos":número,"grupos":["verduras","proteína",...]}
+{"tipo_registro":"sleep","fecha":"día en que despertó","dormir":"HH:MM","despertar":"HH:MM","calidad":1-5}
+{"tipo_registro":"workout","fecha":"...","actividad":"...","minutos":número}
+{"tipo_registro":"event","fecha":"...","nombre":"...","tipo_evento":"Matrimonio|Cumpleaños|Asado|Fiesta|Comida de trabajo|Viaje|Otro","comida":1-3,"alcohol":0-3}
+{"tipo_registro":"symptom","fecha":"...","sintoma":"...","intensidad":1-10,"nota":"..."}
+{"tipo_registro":"visit","fecha":"...","especialidad":"...","motivo":"...","nota":"indicaciones","proximo_control":"YYYY-MM-DD o vacío"}
+{"tipo_registro":"med","fecha":"inicio","nombre":"...","dosis":"...","horario":"..."}`, img ? [img] : null);
+    const regs = (r && Array.isArray(r.registros) ? r.registros : []).map(normEntry).filter(Boolean);
+    chatLog.push({ who: 'bot', text: (r && r.respuesta) ? String(r.respuesta) : (regs.length ? 'Esto es lo que entendí:' : 'Te leo. ¿Me cuentas un poco más?') });
+    chatPending = regs;
+  } catch (e) {
+    chatLog.push({ who: 'bot', text: aiError(e) });
+  }
+  chatBusy = false; renderChat();
+}
+$('#fab').onclick = openChat;
+
+/* ---------- eventos globales ---------- */
+$('#main').addEventListener('click', async e => {
+  const g = e.target.closest('[data-go]'); if (g) return go(g.dataset.go);
+  const s = e.target.closest('[data-seg]'); if (s) { saludTab = s.dataset.seg; return render(); }
+  const del = e.target.closest('[data-del]');
+  if (del) {
+    if (del.dataset.confirm === '1') { del.disabled = true; try { await Store.remove(del.dataset.del); } catch { del.disabled = false; } return; }
+    del.dataset.confirm = '1'; del.innerHTML = '<span class="small" style="color:var(--copihue);font-weight:700">¿Borrar?</span>';
+    setTimeout(() => { if (del.isConnected) { del.dataset.confirm = ''; del.innerHTML = svg('trash'); } }, 3000);
+    return;
+  }
+  const tm = e.target.closest('[data-toggle-med]');
+  if (tm) { const m = Store.items.find(i => i.id === tm.dataset.toggleMed); if (m) await Store.update(m.id, { activo: !m.activo, hasta: m.activo ? today() : '' }); return; }
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  const act = a.dataset.act;
+  if (act === 'add-meal') sheetMeal();
+  else if (act === 'photo-meal') sheetPhoto();
+  else if (act === 'add-event') sheetEvent();
+  else if (act === 'add-workout') sheetWorkout();
+  else if (act === 'add-sleep') sheetSleep();
+  else if (act === 'add-med') sheetMed();
+  else if (act === 'add-visit') sheetVisit();
+  else if (act === 'add-symptom') sheetSymptom();
+  else if (act === 'cfg-back') Store.init();
+  else if (act === 'reco') doReco();
+  else if (act === 'doctor') doDoctor();
+  else if (act === 'done-routine') { const r = ROUTINES[a.dataset.r]; sheetWorkout({ tipo: r.name, minutos: r.mins }); }
+  else if (act === 'copy-doc') {
+    try { await navigator.clipboard.writeText(doctorText); a.textContent = 'Copiado'; }
+    catch { const el = $('#docText'); if (el) { const rg = document.createRange(); rg.selectNodeContents(el); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg); a.textContent = 'Texto seleccionado'; } }
+  }
+});
+
+Store.on(() => { render(); });
+renderNav(); render();
+Store.init();
+// Al volver a la app después de un rato, trae los datos nuevos (por ejemplo, los que llegue a registrar WhatsApp)
+let lastSync = Date.now();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && Date.now() - lastSync > 60000 && Store.mode !== 'config') { lastSync = Date.now(); Store.init(); }
+});
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); }); }
+</script>
+</body>
+</html>

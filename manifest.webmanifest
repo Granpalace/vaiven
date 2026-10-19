@@ -1,0 +1,17 @@
+{
+  "name": "Vaivén",
+  "short_name": "Vaivén",
+  "description": "Tu bitácora de bienestar: comida, ejercicio, eventos, sueño y salud.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EDF3F1",
+  "theme_color": "#0E6B70",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
