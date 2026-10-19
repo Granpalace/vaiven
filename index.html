@@ -260,7 +260,7 @@ const svg = (k, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none
 /* ---------- conexión con tu servidor (Apps Script) ---------- */
 // Después de publicar el Apps Script, pega aquí su dirección (termina en /exec).
 // Si queda vacía, la app la pide en la pantalla de Configuración.
-const API_URL = '';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwmJB33ebPzrwGQBnJMxNWyIyfwyzbMWb08x46kNM331dLUzyenY9dVaf0DMO_VBab6gA/exec';
 function getCfg() { const c = ls.get('vaiven.cfg', {}); return { url: API_URL || c.url || '', token: c.token || '' }; }
 async function api(action, data = {}) {
   const cfg = getCfg();
